@@ -70,6 +70,15 @@ def googleSearch(session, txt_query):
     return output
 
 def build_corpus(batch_size, queries, out_folder) :
+    """ The function build the corpus from the queries by scraping Google's result page.
+        Results are printed in a file by groups of <batch_size>
+        
+        DISCLAIMER : Scraping google is against the Terms of Use and should be done at your own discretion.
+        
+        batch_size : Size of the batches for saving to a file
+        queries : list of the queries
+        out_folder : Folder to store output
+        """
     try :
         os.mkdir(out_folder)
     except :
@@ -79,54 +88,28 @@ def build_corpus(batch_size, queries, out_folder) :
 
     for i in tqdm(loop_range) :
     
-        if  (i < 4) or (i > 60) :
-            # Make search and save response by batches
-            if i != loop_range[-1] :
-                bottom = i*batch_size
-                top = i*batch_size+batch_size
-            else :
-                bottom = i*batch_size
-                top = len(queries)
+        # Make search and save response by batches
+        if i != loop_range[-1] :
+            bottom = i*batch_size
+            top = i*batch_size+batch_size
+        else :
+            bottom = i*batch_size
+            top = len(queries)
 
-            queries_subset = queries[bottom:top]
+        queries_subset = queries[bottom:top]
         
-            # Getting rid of the google maps searches
-            queries_subset = [q for q in queries_subset if not (re.search('->',q) or re.search(',',q))]
+        # Getting rid of the google maps searches
+        queries_subset = [q for q in queries_subset if not (re.search('->',q) or re.search(',',q))]
         
-            # Open session and build corpus
-            s = requests.Session()
-            documents =[{q : googleSearch(s,q)} for q in queries_subset]
+        # Open session and build corpus
+        s = requests.Session()
+        documents =[{q : googleSearch(s,q)} for q in queries_subset]
         
-            # Save data to a file
-            filename = out_folder + "batch_" + str(i) + ".txt"
-            myfile = codecs.open(filename, "w", "utf-8")
+        # Save data to a file
+        filename = out_folder + "batch_" + str(i) + ".txt"
+        myfile = codecs.open(filename, "w", "utf-8")
 
-
-            out = json.dumps(documents, ensure_ascii=False)
-            myfile.write("%s\n" % out )
+        out = json.dumps(documents, ensure_ascii=False)
+        myfile.write("%s\n" % out )
         
-            myfile.close()
-
-
-# Load query data
-indir = 'Recherches/'
-search_data = load_search_jsons(indir)
-
-
-# Build corpus
-# Only build corpus for queries done more than once (for now)
-
-# sel = search_data['query_text'].value_counts()>1
-# non_unique_queries = search_data['query_text'].value_counts()[sel].index.tolist()
-# print len(non_unique_queries)
-
-# Build the rest of the corpus
-sel = search_data['query_text'].value_counts()==1
-unique_queries = search_data['query_text'].value_counts()[sel].index.tolist()
-print len(unique_queries)
-
-# See line 82!! condition to delete
-build_corpus(10, unique_queries,"Recherches/NLP_moredata/")
-
-
-
+        myfile.close()
