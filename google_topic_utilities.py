@@ -76,7 +76,7 @@ def clean_text_data(corpus_dict) :
     #     stop_custom = [u"l'",u"d'",u"qu'"]
     stop = set(stop_en + stop_fr + stop_nl)
 
-base_excl = set(string.punctuation)
+    base_excl = set(string.punctuation)
     cust_excl = set([u'\xb7',u'\xab',u'\xbb',u'\u30fb',u'\uff09',u'\u2014',u'\u2713'])
     exclude = base_excl.union(cust_excl)
     lemma = WordNetLemmatizer()
