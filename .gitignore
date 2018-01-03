@@ -1,0 +1,14 @@
+*.jpg
+*.pyc
+*.csv
+*/
+*.mbox
+*.json
+*.key
+*.txt
+*.png
+*.html
+*.docx
+*.ipynb
+*.pages
+bokeh_dropdown.py
